@@ -1,0 +1,18 @@
+% Tail parameters
+
+AR = 5.2;    % tail aspect ratio
+
+t = 0.5;     % 
+lambda = 15;
+Sw = 43.85;
+mac = 2.29;
+cr = 2.94;
+ct = 1.47;
+tc = 0.139; % chord-thickness ratio
+b = 19.87;
+
+fspar = 0.25;
+bspar = 0.7;
+
+Vw = 0.5 * cr^2 * ct^2 * tc^2 * b; % Wing volume
+Ww = 441.2 * 9.81/2; % Wing weight

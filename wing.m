@@ -2,15 +2,15 @@
 
 componentname = 'wing';
 
-AR = 9;
-t = 0.5;
-lambda = 15;
-Sw = 43.85;
-mac = 2.29;
-cr = mac*(3/2)*(1+t)/(1+t+t^2);
-ct = t*cr;
-tc = 0.139; % Thickness-to-chord ratio
-b = 19.87;
+AR = 9;      % wing aspect ratio
+t = 0.5;     % wing taper ratio
+lambda = 15; % wing sweep [deg]
+Sw = 43.85;  % wing area
+mac = 2.29;  % wing MAC
+cr = mac*(3/2)*(1+t)/(1+t+t^2); % wing root chord length
+ct = t*cr;   % wing tip chord length
+tc = 0.139;  % wing thickness-to-chord ratio
+b = 19.87;   % wing span
 
 fspar = 0.25;
 bspar = 0.7;

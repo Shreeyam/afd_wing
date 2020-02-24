@@ -6,7 +6,6 @@ clear;
 addpath(genpath('./SFBM'))
 
 %% Parameters
-
 ac;
 wing;
 % htail;
@@ -26,10 +25,10 @@ elseif strcmp(componentname,'htail')
 end
 
 %% Torsion
-% wing
+% wing case
 if strcmp(componentname,'wing')
     airfoil = readtable('sc20714.dat', 'HeaderLines', 3);
-% h-tail
+% h-tail case
 elseif strcmp(componentname,'htail')
     airfoil = readtable('n0012.dat', 'HeaderLines', 3);
 end
@@ -40,6 +39,7 @@ afy = airfoil.Var2;
 afx(length(afx)/2:end) = afx(end:-1:length(afx)/2);
 afy(length(afx)/2:end) = afy(end:-1:length(afx)/2);
 
+% create polyshape object from x, y coordinates
 afpoly = polyshape(afx, afy);
 
 % Centre of structural mass
@@ -57,7 +57,6 @@ plot(afcx, afcy, 'x');
 plot(aff, 0, 'x');
 % Spars
 
-
 grid;
 axis equal tight;
 improvePlot;
@@ -67,9 +66,27 @@ improvePlot;
 SFBM('Athena Wing',[b/2, 0],{'DF',load,y});
 
 %% find torque and bending momment
-% An : nose cell area, between 0 and fspar
-% Ar : rectangular cell area, between fspar and bspar
+% discretize wing
+spanwise_steps = 100;
+yloc = linspace(0,b,spanwise_steps);
+c_y = zeros(1,spanwise_steps);
+An  = zeros(1,spanwise_steps);
+Ar  = zeros(1,spanwise_steps);
+for i = 1:spanwise_steps
+    % chord length at given spanwise location
+    c_y(1,i) = c(yloc(1,i), Sw, t, b);
+    % An : nose cell area, between 0 and fspar
+    An(1,i) = afarea(afpoly,tc,c_y(1,i),fspar);
+    % Ar : rectangular cell area, between fspar and bspar
+    Ar(1,i) = afarea(afpoly,tc,c_y(1,i),bspar) - An(1,i);
+    % compute front spar height
     
+    % build matrix relating shear flow and loads
+    
+    
+end
+
+
     
 % need parameters B (boom area), H (spar height), A (enclosed area), T, Sy
 

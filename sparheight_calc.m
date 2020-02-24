@@ -1,15 +1,14 @@
-function area = afarea(psobj,tc,chord,cfrac)
+function sparheight = sparheight_calc(psobj,tc,chord,cfrac)
 % Yuri Shimane, 2020/02/24
 % ================================================================ %
-% Function calculates area of airfoil (optinally up to a certain %-location
-% in chord length)
+% Function calculates spar height at given location of the airfoil
 % INPUT
 %   psobj : polyshape object of airfoil, with unit chord length
-%   tc    : thickness-to-chord ratio
+%   tc    : thickness-to-chord ratio (by default set to 1)
 %   chord : physical chord length (by default set to 1)
-%   cfrac : fraction along chord length to integrate [0;1]
+%   cfrac : fraction location along chord to calculate spar-height
 % OUTPUT
-%   area  : area of airfoil
+%   y     : spar height
 % ================================================================ %
 
 if nargin == 1
@@ -37,20 +36,17 @@ lower_y = flipud(lower_y);
 % interpolate functions as symbolic object
 upper_p = polyfit(upper_x,upper_y,5);
 lower_p = polyfit(lower_x,lower_y,5);
-% create array to integrate
-x_integrate = linspace(0,cfrac,100);
-upper_y = polyval(upper_p,x_integrate);
-lower_y = polyval(lower_p,x_integrate);
-% shift airfoil upward to be robust against flip in +/- in the y-axis
+
+% calculate y-coordinates of upper and lower surfaces at cfrac
+upper_y = polyval(upper_p,cfrac);
+lower_y = polyval(lower_p,cfrac);
+
+% shift y-values upward just in case
 upper_y = upper_y + 10;
 lower_y = lower_y + 10;
-% integrate
-upper_area = trapz(x_integrate,upper_y);
-lower_area = trapz(x_integrate,lower_y);
-% unit-chord area
-area_unit = upper_area - lower_area;
-% convert to physical area
-area = area_unit * chord^2 * tc;
+
+% calculate spar-height, rescaling with chord length
+sparheight = (upper_y - lower_y) * chord;
 
 end
 

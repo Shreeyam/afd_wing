@@ -30,7 +30,7 @@ yloc = linspace(0,b,spanwise_steps);
 % d_fspar = zeros(1,spanwise_steps);
 
 % Iterate over wingspan
-for i = 1:spanwise_steps
+for i = 1:1%spanwise_steps
     % chord length at given spanwise location
     c_y(1,i) = c(yloc(1,i), Sw, t, b);   % [m]
     % An : nose cell area, between 0 and fspar
@@ -81,9 +81,9 @@ for i = 1:spanwise_steps
     check_T = 2*An*q(1,1) + 2*Ar*q(2,1);
     
     % calculate volume per unit span
-    vol_skin_per_span(1,i) = tn * Sn(1,i);  % [mm^3]
-    vol_skin_per_span(2,i) = tr * Sr(1,i);  % [mm^3]
-    vol_skin_per_span(3,i) = tw * h_w(1,i); % [mm^3]
+    vol_skin_per_span(1,i) = tn * Sn;  % [mm^3]
+    vol_skin_per_span(2,i) = tr * Sr;  % [mm^3]
+    vol_skin_per_span(3,i) = tw * h_w; % [mm^3]
     vol_totalskin_per_span = vol_skin_per_span(1,i) + ...
         vol_skin_per_span(2,i) + vol_skin_per_span(3,i);  % [mm^3]
     
@@ -91,13 +91,10 @@ end
 
 %% Run optimizer
 t0 = [tn; tr; tw]; % initial guess
-taumax = 1000000;
 % optimizer option
 opts = optimoptions('fmincon','Display','iter','MaxFunctionEvaluations',1e4,...
         'MaxIterations',1e3,'ConstraintTolerance',1.0000e-03,...
         'FiniteDifferenceType','central','FiniteDifferenceStepSize',1e-8);
-% define number of discretization step along wing
-spanwise_steps = 30;
-[t,fval,exitflag,output] = optim_skin(t0,b,G,taumax,spanwise_steps,componentname,opts);
+[t,fval,exitflag,output] = optim_skin(t0);
 
 

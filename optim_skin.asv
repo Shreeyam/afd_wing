@@ -1,0 +1,56 @@
+function [t,fval,exitflag,output] = optim_skin(t0,b,G,taumax,spanwise_steps,opts)
+% Function calls nested fmincon to optimize for skin thickness
+% FORMAT : [u,fval,exitflag,output] = optim_skin(t0,G,taumax,opts)
+% INPUT :
+%   t0 : initial guess thickness, 3x1 formated as [tn; tr; tw] in [mm]
+%   G : material shear modulus [N/mm^2]
+%   taumax : material max shear stress [N/mm^2]
+%   opts : optimizer option
+% Yuri Shimane, 2020/02/24
+
+% declare global variables for speed
+tLast;
+
+% objective function, nested below
+objf = @objfun;
+% constraint function, nested below
+cfun = @nlcon;
+% lower and upper bounds
+lb = 0.5 * ones(3,1);  % set min skin thickness [mm]
+ub = 10^3 * ones(3,1); % set max skin thickness [mm]
+
+% call fmincon
+[t,fval,exitflag,output] = fmincon(objf,t0,[],[],[],[],lb,ub,cfun,opts);
+
+% ... nested functions below ...
+    % ===== objective function ===== %
+    function [fval] = objfun(t)        
+        % check if computation is necessary
+        if ~isequal(t,tLast)
+            % if t is not equal to tLast, calculate shear along span
+            [fvalLast, cLast] = calc_shear_func(t,G,spanwise_steps,b,taumax);
+            tLast = t;
+        end
+        
+        % return objective function value
+        fval = fvalLast;
+    
+    end
+
+    % ===== non-linear constraint function ===== %
+    function [c,ceq] = nlcon(t)
+%         % check if computation is necessary
+%         if ~isequal(u,uLast)
+%             % if u is not equal to uLast, run dynamics
+%             [fvalLast,gradfLast,cLast,ceqLast,gradcLast,gradceqLast] = rundynamics(u,nsteps,tf,mcxop);
+%             uLast = u;
+%         end
+%         c = cLast;
+%         ceq = ceqLast;
+%         gradc = gradcLast;
+%         gradceq = gradceqLast;
+    end
+    
+end
+
+

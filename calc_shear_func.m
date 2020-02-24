@@ -1,36 +1,36 @@
-%% Shear load calculation
-% Yuri Shimane, 2020/02/24
+function [fval, c_ineq] = calc_shear_func(thickness,G,spanwise_steps,b,taumax,componentname)
+% Function called within optim_skin for skin optimization
 
-%% Load information from sims.m
-clear;
-sims;  % run sims.m
-close all;
-disp('Optimization of skin thicknesses...')
+% call data
+if strcmp(componentname,'wing')
+    wing;
+elseif strcmp(componentname,'htail')
+    htail;
+end
+% ... very ugly sorry
+load('sims_workspace.mat')
 
-%% Double-cell wing torque / bending moment
-% skin thickness - variable!
-tn = 1.2;  % [mm]
-tr = 1.2;  % [mm]
-tw = 1.6;  % [mm]
-
-% material parameter
-G = 25000;     % shear modulus [N/mm^2]
-% G = G_Nmm * 10^6;  % convert to SI [N/m^2]
+% deconstruct thickness by components
+tn = thickness(1,1);  % [mm]
+tr = thickness(2,1);  % [mm]
+tw = thickness(3,1);  % [mm]
 
 % discretize wing
-spanwise_steps = 30;
 yloc = linspace(0,b,spanwise_steps);
 % initialize
-% c_y = zeros(1,spanwise_steps);
-% An  = zeros(1,spanwise_steps);
-% Ar  = zeros(1,spanwise_steps);
-% Sn  = zeros(1,spanwise_steps);
-% Sr  = zeros(1,spanwise_steps);
-% h_w = zeros(1,spanwise_steps);
+c_y = zeros(1,spanwise_steps);
+An  = zeros(1,spanwise_steps);
+Ar  = zeros(1,spanwise_steps);
+Sn  = zeros(1,spanwise_steps);
+Sr  = zeros(1,spanwise_steps);
+h_w = zeros(1,spanwise_steps);
 % d_fspar = zeros(1,spanwise_steps);
-
+vol_skin_per_span = zeros(3,spanwise_steps);
+vol_totalskin_per_span = zeros(1,spanwise_steps);
+c_ineq = zeros(spanwise_steps*3,1);
+ii = 1;
 % Iterate over wingspan
-for i = 1:spanwise_steps
+for i = 1:spanwise_steps-1   % work only up to right before tip to avoid matrix singularity
     % chord length at given spanwise location
     c_y(1,i) = c(yloc(1,i), Sw, t, b);   % [m]
     % An : nose cell area, between 0 and fspar
@@ -65,7 +65,7 @@ for i = 1:spanwise_steps
     rhs_load(1,1) = rhs_load(1,1) * 10^3; % [N.mm]
     
     % build matrix relating shear flow and loads
-    [dcmat, invdcmat] = doublecellmat(Ar(1,i),An(1,i),tw,tn,tr,Sn(1,i),Sr(1,i),h_w(1,i),G);
+    [~, invdcmat] = doublecellmat(Ar(1,i),An(1,i),tw,tn,tr,Sn(1,i),Sr(1,i),h_w(1,i),G);
     
     % compute shear flow in order : n, r, w
     q = invdcmat * rhs_load; 
@@ -74,30 +74,30 @@ for i = 1:spanwise_steps
     tau(1,1) = q(1,1) / tn;   % [N/mm^2]
     tau(2,1) = q(2,1) / tr;   % [N/mm^2]
     tau(3,1) = q(3,1) / tw;   % [N/mm^2]
-    fprintf('tau [N/mm^2]: \n tau_n = %f\n tau_r = %f\n tau_w = %f\n',tau)
+%     fprintf('tau [N/mm^2]: \n tau_n = %f\n tau_r = %f\n tau_w = %f\n',tau)
     
     % check:
-    check_P = (q(1,1) - q(2,1) - q(3,1))*h_w;
-    check_T = 2*An*q(1,1) + 2*Ar*q(2,1);
+%     check_P = (q(1,1) - q(2,1) - q(3,1))*h_w;
+%     check_T = 2*An*q(1,1) + 2*Ar*q(2,1);
     
     % calculate volume per unit span
     vol_skin_per_span(1,i) = tn * Sn(1,i);  % [mm^3]
     vol_skin_per_span(2,i) = tr * Sr(1,i);  % [mm^3]
     vol_skin_per_span(3,i) = tw * h_w(1,i); % [mm^3]
-    vol_totalskin_per_span = vol_skin_per_span(1,i) + ...
-        vol_skin_per_span(2,i) + vol_skin_per_span(3,i);  % [mm^3]
+    vol_totalskin_per_span(1,i) = vol_skin_per_span(1,i) + ...
+    vol_skin_per_span(2,i) + vol_skin_per_span(3,i);  % [mm^3]
+    
+    % calculate non-linear equality constraints
+    c_ineq(ii,1)   = tau(1,1) - taumax;
+    ii = ii + 1; % update ii
+    c_ineq(ii+1,1) = tau(2,1) - taumax;
+    ii = ii + 1; % update ii
+    c_ineq(ii+2,1) = tau(3,1) - taumax;
+    ii = ii + 1; % update ii
     
 end
 
-%% Run optimizer
-t0 = [tn; tr; tw]; % initial guess
-taumax = 1000000;
-% optimizer option
-opts = optimoptions('fmincon','Display','iter','MaxFunctionEvaluations',1e4,...
-        'MaxIterations',1e3,'ConstraintTolerance',1.0000e-03,...
-        'FiniteDifferenceType','central','FiniteDifferenceStepSize',1e-8);
-% define number of discretization step along wing
-spanwise_steps = 30;
-[t,fval,exitflag,output] = optim_skin(t0,b,G,taumax,spanwise_steps,componentname,opts);
+% compute total volume
+fval = sum(vol_totalskin_per_span);
 
-
+end

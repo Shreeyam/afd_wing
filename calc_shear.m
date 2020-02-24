@@ -82,16 +82,3 @@ for i = 1:1%spanwise_steps
     
 end
 
-
-
-    
-% need parameters B (boom area), H (spar height), A (enclosed area), T, Sy
-
-% 1. Find torque from bending moment 
-% T = 2 * An * qn + 2 * Ar * qr
-% 2. Do vertical equilibrium to get another formula
-% P = (qn - qw - qr) * hw (P is vertical force)
-% 3. final equation for shear flow comes from twist angle
-% d(theta)/d(x) is the same => 1/(2GAn) * (Sn * qn/tn + hw * qw /tw) = 1/(2GAn) * (Sr * qr/tr + hw * qw /tw)
-% From here, we can construct a matrix equation for qn, qw, qr and solve along for the shear flow, and compare it to the material selection
-

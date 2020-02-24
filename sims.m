@@ -19,9 +19,9 @@ y = linspace(0, b/2, n);
 
 %% Forces
 if strcmp(componentname,'wing')
-    load = L(y, b/2, MTOW, f, n) + struc(y, Sw, t, b/2, Vw, Ww) + fuel(y, Sw, t, b/2, Vw, Ww);
+    load = Lift_perSpan(y, b/2, MTOW, f, n) + struct_weight(y, Sw, t, b/2, Vw, Ww) + fuel_weight(y, Sw, t, b/2, Vw, Ww);
 elseif strcmp(componentname,'htail')
-    load = L(y, b/2, MTOW, f, n) + struc(y, Sw, t, b/2, Vw, Ww);
+    load = Lift_perSpan(y, b/2, MTOW, f, n) + struct_weight(y, Sw, t, b/2, Vw, Ww);
 end
 
 %% Torsion
@@ -65,6 +65,7 @@ improvePlot;
 
 SFBM('Athena Wing',[b/2, 0],{'DF',load,y});
 
+return
 %% find torque and bending momment (double cell tube calculation)
 % discretize wing
 spanwise_steps = 30;
@@ -89,13 +90,15 @@ for i = 1:spanwise_steps
     sc_frac = (fspar + bspar)/2;
     d(1,i) = (sc_frac - fspar)*c_y(1,i);
     
+    % compute load
+    loadcalc(M0,lift,d_lift,W_struct,d_Wstruct,W_fuel,d_fuel,d_sc)
+    
     % build matrix relating shear flow and loads 
     % WILL HAVE ISSUES!!! Havent defined Sn, Sr
     [~, invdcmat] = doublecellmat(Ar,An,tw,tn,tr,Sn,Sr,h_w,G);
-    % rhs (load terms)
-    loads = []
+    
     % shear flow 
-    q = invdcmat * loads; 
+    q = invdcmat * rhs_loads; 
     
 
           
@@ -116,28 +119,4 @@ end
 
 
 
-%% Nested function
 
-% lift per unit span
-function out = L(y, b, MTOW, f, n)
-    % TODO: Justify values of safety and load factor. From the report?
-    out = (2 * f * n * MTOW)/(pi * b^2) .* sqrt(b^2 - y.^2);
-end
-
-% function out = c(y, Sw, t, b) >> saved as its own function file
-%     out = (2 * Sw)/((1 + t) * b) * (1 - (1 - t)/b .* y);
-% end
-
-function out = vfrac(y, Sw, t, b, Vw)
-    out = (c(y, Sw, t, b) .* 2)/(Vw);
-end
-
-% structural weight per unit span
-function out = struc(y, Sw, t, b, Vw, Ww)
-    out = vfrac(y, Sw, t, b, Vw) * -Ww;
-end
-
-% fuel weight per unit span
-function out = fuel(y, Sw, t, b, Vw, Wf)
-    out = vfrac(y, Sw, t, b, Vw) * -Wf;
-end

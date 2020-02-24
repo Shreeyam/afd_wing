@@ -13,6 +13,7 @@ tc = 0.12;    % H-tailThickness-to-chord ratio
 b = 7.5;      % H-tail span
 fspar = 0.25; % H-tail spar num.: same as wing
 bspar = 0.7;  % H-tail spar num.: same as wing
+M0 = 0;       % H-tail zero-lift moment
 
 % compute volume and weight
 Vw = 0.5 * cr^2 * ct^2 * tc^2 * b; % H-tail volume

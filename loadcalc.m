@@ -1,4 +1,4 @@
-function load_vect = loadcalc(M0,lift,d_lift,W_struct,d_Wstruct,W_fuel,d_fuel,d_sc)
+function load_vect = loadcalc(M0,lift,d_lift,W_struct,d_Wstruct,W_fuel,d_Wfuel,d_sc)
 % Function calculates load vector; torque is about shear-centre (sc)
 % Yuri Shimane, 2020/02/24
 % ================================================= %
@@ -26,7 +26,7 @@ T_struct = -W_struct * (d_Wstruct - d_sc);  % should be +ve
 % compute lift torque
 T_lift = lift * (d_lift - d_sc);            % should be -ve
 % compute fuel torque (0 of d_Wfuel = d_sc)
-T_fuel = -W_fuel * (d_fuel - d_sc);         % should be 0
+T_fuel = -W_fuel * (d_Wfuel - d_sc);         % should be 0
 
 % combine torques
 Torque = M0 + T_struct + T_lift + T_fuel;

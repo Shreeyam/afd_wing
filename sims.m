@@ -42,10 +42,10 @@ afy(length(afx)/2:end) = afy(end:-1:length(afx)/2);
 % create polyshape object from x, y coordinates
 afpoly = polyshape(afx, afy);
 
-% Centre of structural mass
+% Centre of structural mass - structural weight acting point
 [afcx, afcy] = centroid(afpoly);
 
-% Centre of flexure (flexural axis)
+% Centre of flexure (flexural axis) - shear centre
 aff = (fspar + bspar)/2;
 
 %% Plot torsion
@@ -65,46 +65,8 @@ improvePlot;
 
 SFBM('Athena Wing',[b/2, 0],{'DF',load,y});
 
-return
+
 %% find torque and bending momment (double cell tube calculation)
-% discretize wing
-spanwise_steps = 30;
-yloc = linspace(0,b,spanwise_steps);
-% initialize
-c_y = zeros(1,spanwise_steps);
-An  = zeros(1,spanwise_steps);
-Ar  = zeros(1,spanwise_steps);
-h_w = zeros(1,spanwise_steps);
-d   = zeros(1,spanwise_steps);
-% Iterate over wingspan
-for i = 1:spanwise_steps
-    % chord length at given spanwise location
-    c_y(1,i) = c(yloc(1,i), Sw, t, b);
-    % An : nose cell area, between 0 and fspar
-    An(1,i) = afarea(afpoly,tc,c_y(1,i),fspar);
-    % Ar : rectangular cell area, between fspar and bspar
-    Ar(1,i) = afarea(afpoly,tc,c_y(1,i),bspar) - An(1,i);
-    % compute front spar height (at fspar location)
-    h_w(1,i) = sparheight_calc(afpoly,c_y(1,i),fspar);
-    % compute distance to shear centre
-    sc_frac = (fspar + bspar)/2;
-    d(1,i) = (sc_frac - fspar)*c_y(1,i);
-    
-    % compute load
-    loadcalc(M0,lift,d_lift,W_struct,d_Wstruct,W_fuel,d_fuel,d_sc)
-    
-    % build matrix relating shear flow and loads 
-    % WILL HAVE ISSUES!!! Havent defined Sn, Sr
-    [~, invdcmat] = doublecellmat(Ar,An,tw,tn,tr,Sn,Sr,h_w,G);
-    
-    % shear flow 
-    q = invdcmat * rhs_loads; 
-    
-
-          
-    
-end
-
 
     
 % need parameters B (boom area), H (spar height), A (enclosed area), T, Sy

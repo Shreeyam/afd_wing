@@ -2,6 +2,7 @@ function S = cell_circumference(afpoly,chord,cfrac)
 % Yuri Shimane, 2020/02/24
 % ================================================================ %
 % Function calculates cell circumference over discretized airfoil
+% FORMAT : S = cell_circumference(afpoly,chord,cfrac)
 % INPUT
 %   afpoly : polyshape object of airfoil, with unit chord length
 %   chord  : physical chord length (by default set to 1)
@@ -34,8 +35,8 @@ end
 lower_x = flipud(lower_x);
 lower_y = flipud(lower_y);
 % interpolate functions as symbolic object
-upper_p = polyfit(upper_x,upper_y,9);
-lower_p = polyfit(lower_x,lower_y,9);
+upper_p = polyfit(upper_x,upper_y,9);  % CAUTION - HIGH DEGREE POLYNOMIAL!
+lower_p = polyfit(lower_x,lower_y,9);  % CAUTION - HIGH DEGREE POLYNOMIAL!
 % create array to integrate up to cfrac
 x_interp = linspace(0,cfrac,300)';
 upper_y_interp = polyval(upper_p,x_interp);
@@ -72,30 +73,19 @@ S = sum(upper_S) + sum(lower_S);
 
 
 % de-bug plots
-figure(101)
-plot(upper_x,upper_y,'xb')
-hold on
-plot(lower_x,lower_y,'xr')
-axis equal
-
-figure(102)
-plot(x_interp,upper_y_interp,'xb')
-hold on
-plot(x_interp,lower_y_interp,'xr')
-axis equal
-
-disp(2*chord);
-
-% shift airfoil upward to be robust against flip in +/- in the y-axis
-% upper_y = upper_y + 10;
-% lower_y = lower_y + 10;
-% % integrate
-% upper_area = trapz(x_interp,upper_y);
-% lower_area = trapz(x_interp,lower_y);
-% % unit-chord area
-% area_unit = upper_area - lower_area;
-% % convert to physical area
-% area = area_unit * chord^2 * tc;
+% figure(101)
+% plot(upper_x,upper_y,'xb')
+% hold on
+% plot(lower_x,lower_y,'xr')
+% axis equal
+% 
+% figure(102)
+% plot(x_interp,upper_y_interp,'xb')
+% hold on
+% plot(x_interp,lower_y_interp,'xr')
+% axis equal
+% 
+% fprintf('chord x 2 = %f\n',2*chord);
 
 end
 

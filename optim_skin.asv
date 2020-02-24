@@ -9,13 +9,13 @@ disp('Optimization of skin thicknesses...')
 
 %% Double-cell wing torque / bending moment
 % skin thickness - variable!
-tw = 1.6;  % [mm]
-tn = 1.2;  % [mm]
-tr = 1.2;  % [mm]
+tw = 1.6/1000;  % [m]
+tn = 1.2/1000;  % [m]
+tr = 1.2/1000;  % [m]
 
 % material parameter
-G = 25000;     % shear modulus [N/mm^2]
-% G = G_Nmm * 10^6;  % convert to SI [N/m^2]
+G_Nmm = 25000;     % shear modulus [N/mm^2]
+G = G_Nmm * 10^6;  % convert to SI [N/m^2]
 
 % discretize wing
 spanwise_steps = 30;
@@ -32,22 +32,22 @@ yloc = linspace(0,b,spanwise_steps);
 % Iterate over wingspan
 for i = 1:1%spanwise_steps
     % chord length at given spanwise location
-    c_y(1,i) = c(yloc(1,i), Sw, t, b);   % [m]
+    c_y(1,i) = c(yloc(1,i), Sw, t, b);
     % An : nose cell area, between 0 and fspar
-    An(1,i) = afarea(afpoly,tc,c_y(1,i),fspar) * 10^6;  % [mm^2]
+    An(1,i) = afarea(afpoly,tc,c_y(1,i),fspar);
     % Ar : rectangular cell area, between fspar and bspar
-    Ar(1,i) = afarea(afpoly,tc,c_y(1,i),bspar) * 10^6 - An(1,i) ;  % [mm^2]
+    Ar(1,i) = afarea(afpoly,tc,c_y(1,i),bspar) - An(1,i);
     
     % compute cell circumference Sn, Sr
-    Sn(1,i) = cell_circumference(afpoly,c_y(1,i),fspar) * 10^3; % [mm]
-    Sr(1,i) = cell_circumference(afpoly,c_y(1,i),1) * 10^3 - Sn(1,i); % [mm]
+    Sn(1,i) = cell_circumference(afpoly,c_y(1,i),fspar);
+    Sr(1,i) = cell_circumference(afpoly,c_y(1,i),1) - Sn(1,i);
     
     % compute front spar height (at fspar location)
-    h_w(1,i) = sparheight_calc(afpoly,c_y(1,i),fspar) * 10^3; % [mm]
+    h_w(1,i) = sparheight_calc(afpoly,c_y(1,i),fspar);
     
     % compute distance from front spar to shear-centre
-%     sc_frac = (fspar + bspar)/2;
-%     d_fspar(1,i) = (sc_frac - fspar)*c_y(1,i); % [m]
+    sc_frac = (fspar + bspar)/2;
+    d_fspar(1,i) = (sc_frac - fspar)*c_y(1,i);
     
     % compute load per unit span
     lift     = Lift_perSpan(yloc(1,i), b, MTOW, f, n);
@@ -59,26 +59,17 @@ for i = 1:1%spanwise_steps
     d_Wfuel   = aff * c_y(1,i);  % fuel acting at shear-centre (assumption)
     % compute distance from leading-edge to shear-centre
     d_sc = aff * c_y(1,i);
-    % compute rhs vector of load [N] (and torque [Nm])
+    % compute rhs vector of loads (and torque)
     rhs_load = loadcalc(M0,lift,d_lift,W_struct,d_Wstruct,W_fuel,d_Wfuel,d_sc);
-    % convert unit
-    rhs_load(1,1) = rhs_load(1,1) * 10^3; % [N.mm]
     
     % build matrix relating shear flow and loads
     [dcmat, invdcmat] = doublecellmat(Ar(1,i),An(1,i),tw,tn,tr,Sn(1,i),Sr(1,i),h_w(1,i),G);
     
-    % compute shear flow in order : n, r, w
+    % compute shear flow 
     q = invdcmat * rhs_load; 
           
-    % compute shear in orde : n, r, w
-    tau(1,1) = q(1,1) / tn;   % [N/mm^2]
-    tau(2,1) = q(2,1) / tr;   % [N/mm^2]
-    tau(3,1) = q(3,1) / tw;   % [N/mm^2]
-    fprintf('tau [N/mm^2]: \n tau_n = %f\n tau_r = %f\n tau_w = %f\n',tau)
-    
-    % check:
-    check_P = (q(1,1) - q(2,1) - q(3,1))*h_w;
-    check_T = 2*An*q(1,1) + 2*Ar*q(2,1);
+    % compute shear
+    tau =
     
 end
 

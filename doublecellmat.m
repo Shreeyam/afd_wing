@@ -20,7 +20,7 @@ eq2 = [h_w, -h_w, -h_w];
 
 % third row of matrix
 eq31 =  ( 1/(2*G*An) ) * (Sn/tn);
-eq32 = -( 1/(2*G*An) ) * (Sr/tr);
+eq32 = -Sr/tr * 1/(2*G*Ar);
 eq33 =  ( h_w/(2*tw*G) ) * (1/An + 1/Ar);
 eq3 = [eq31, eq32, eq33];
 

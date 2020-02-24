@@ -1,13 +1,13 @@
-function area = afarea(psobj,tc,chord,cfrac)
+function area = afarea(afpoly,tc,chord,cfrac)
 % Yuri Shimane, 2020/02/24
 % ================================================================ %
 % Function calculates area of airfoil (optinally up to a certain %-location
 % in chord length)
 % INPUT
-%   psobj : polyshape object of airfoil, with unit chord length
-%   tc    : thickness-to-chord ratio
-%   chord : physical chord length (by default set to 1)
-%   cfrac : fraction along chord length to integrate [0;1]
+%   afpoly : polyshape object of airfoil, with unit chord length
+%   tc     : thickness-to-chord ratio
+%   chord  : physical chord length (by default set to 1)
+%   cfrac  : fraction along chord length to integrate [0;1]
 % OUTPUT
 %   area  : area of airfoil
 % ================================================================ %
@@ -20,14 +20,14 @@ end
 
 k = 1;
 l = 1;
-for i = 1:length(psobj.Vertices)-1
-    if psobj.Vertices(i,1) <= psobj.Vertices(i+1,1)
-        upper_x(k,1) = psobj.Vertices(i,1);
-        upper_y(k,1) = psobj.Vertices(i,2);
+for i = 1:length(afpoly.Vertices)-1
+    if afpoly.Vertices(i,1) <= afpoly.Vertices(i+1,1)
+        upper_x(k,1) = afpoly.Vertices(i,1);
+        upper_y(k,1) = afpoly.Vertices(i,2);
         k = k + 1;
     else
-        lower_x(l,1) = psobj.Vertices(i,1);
-        lower_y(l,1) = psobj.Vertices(i,2);
+        lower_x(l,1) = afpoly.Vertices(i,1);
+        lower_y(l,1) = afpoly.Vertices(i,2);
         l = l+1;
     end
 end

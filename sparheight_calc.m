@@ -1,32 +1,30 @@
-function sparheight = sparheight_calc(psobj,tc,chord,cfrac)
+function sparheight = sparheight_calc(afpoly,chord,cfrac)
 % Yuri Shimane, 2020/02/24
 % ================================================================ %
 % Function calculates spar height at given location of the airfoil
 % INPUT
-%   psobj : polyshape object of airfoil, with unit chord length
-%   tc    : thickness-to-chord ratio (by default set to 1)
-%   chord : physical chord length (by default set to 1)
-%   cfrac : fraction location along chord to calculate spar-height
+%   afpoly : polyshape object of airfoil, with unit chord length
+%   chord  : physical chord length (by default set to 1)
+%   cfrac  : fraction location along chord to calculate spar-height
 % OUTPUT
 %   y     : spar height
 % ================================================================ %
 
 if nargin == 1
-    tc = 1;
     chord = 1;  % by default, calculate airfoil area for unit chord
     cfrac = 1;  % by default, return entire area
 end
 
 k = 1;
 l = 1;
-for i = 1:length(psobj.Vertices)-1
-    if psobj.Vertices(i,1) <= psobj.Vertices(i+1,1)
-        upper_x(k,1) = psobj.Vertices(i,1);
-        upper_y(k,1) = psobj.Vertices(i,2);
+for i = 1:length(afpoly.Vertices)-1
+    if afpoly.Vertices(i,1) <= afpoly.Vertices(i+1,1)
+        upper_x(k,1) = afpoly.Vertices(i,1);
+        upper_y(k,1) = afpoly.Vertices(i,2);
         k = k + 1;
     else
-        lower_x(l,1) = psobj.Vertices(i,1);
-        lower_y(l,1) = psobj.Vertices(i,2);
+        lower_x(l,1) = afpoly.Vertices(i,1);
+        lower_y(l,1) = afpoly.Vertices(i,2);
         l = l+1;
     end
 end

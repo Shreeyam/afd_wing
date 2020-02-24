@@ -65,13 +65,17 @@ improvePlot;
 
 SFBM('Athena Wing',[b/2, 0],{'DF',load,y});
 
-%% find torque and bending momment
+%% find torque and bending momment (double cell tube calculation)
 % discretize wing
-spanwise_steps = 100;
+spanwise_steps = 30;
 yloc = linspace(0,b,spanwise_steps);
+% initialize
 c_y = zeros(1,spanwise_steps);
 An  = zeros(1,spanwise_steps);
 Ar  = zeros(1,spanwise_steps);
+h_w = zeros(1,spanwise_steps);
+d   = zeros(1,spanwise_steps);
+% Iterate over wingspan
 for i = 1:spanwise_steps
     % chord length at given spanwise location
     c_y(1,i) = c(yloc(1,i), Sw, t, b);
@@ -79,10 +83,22 @@ for i = 1:spanwise_steps
     An(1,i) = afarea(afpoly,tc,c_y(1,i),fspar);
     % Ar : rectangular cell area, between fspar and bspar
     Ar(1,i) = afarea(afpoly,tc,c_y(1,i),bspar) - An(1,i);
-    % compute front spar height
+    % compute front spar height (at fspar location)
+    h_w(1,i) = sparheight_calc(afpoly,c_y(1,i),fspar);
+    % compute distance to shear centre
+    sc_frac = (fspar + bspar)/2;
+    d(1,i) = (sc_frac - fspar)*c_y(1,i);
     
-    % build matrix relating shear flow and loads
+    % build matrix relating shear flow and loads 
+    % WILL HAVE ISSUES!!! Havent defined Sn, Sr
+    [~, invdcmat] = doublecellmat(Ar,An,tw,tn,tr,Sn,Sr,h_w,G);
+    % rhs (load terms)
+    loads = []
+    % shear flow 
+    q = invdcmat * loads; 
     
+
+          
     
 end
 
@@ -102,23 +118,26 @@ end
 
 %% Nested function
 
+% lift per unit span
 function out = L(y, b, MTOW, f, n)
     % TODO: Justify values of safety and load factor. From the report?
     out = (2 * f * n * MTOW)/(pi * b^2) .* sqrt(b^2 - y.^2);
 end
 
-function out = c(y, Sw, t, b)
-    out = (2 * Sw)/((1 + t) * b) * (1 - (1 - t)/b .* y);
-end
+% function out = c(y, Sw, t, b) >> saved as its own function file
+%     out = (2 * Sw)/((1 + t) * b) * (1 - (1 - t)/b .* y);
+% end
 
 function out = vfrac(y, Sw, t, b, Vw)
     out = (c(y, Sw, t, b) .* 2)/(Vw);
 end
 
+% structural weight per unit span
 function out = struc(y, Sw, t, b, Vw, Ww)
     out = vfrac(y, Sw, t, b, Vw) * -Ww;
 end
 
+% fuel weight per unit span
 function out = fuel(y, Sw, t, b, Vw, Wf)
     out = vfrac(y, Sw, t, b, Vw) * -Wf;
 end

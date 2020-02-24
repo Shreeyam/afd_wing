@@ -16,6 +16,6 @@ bspar = 0.7;  % H-tail spar num.: same as wing
 M0 = 0;       % H-tail zero-lift moment
 
 % compute volume and weight
-Vw = 0.5 * cr^2 * ct^2 * tc^2 * b; % H-tail volume
-Ww = 146.0 * 9.81/2;               % H-tail load on half of H-tail (146kg: total Htail)
+Vw = 1;                     % H-tail volume % TODO: FIX this, find an analytical expression?
+Ww = 146.0 * 9.81/2;        % H-tail load on half of H-tail (146kg: total Htail)
 

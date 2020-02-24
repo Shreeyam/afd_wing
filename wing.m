@@ -16,5 +16,5 @@ bspar = 0.7;
 M0 = 0;      % wing zero-lift moment ___ FIXME!!
 
 % compute volume and weight
-Vw = 0.5 * cr^2 * ct^2 * tc^2 * b; % Wing volume
+Vw = 6.0952; % Wing volume
 Ww = 441.2 * 9.81/2; % Wing weight (441.2kg: total wing)

@@ -19,9 +19,9 @@ y = linspace(0, b/2, n);
 
 %% Forces
 if strcmp(componentname,'wing')
-    load = Lift_perSpan(y, b/2, MTOW, f, n) + struct_weight(y, Sw, t, b/2, Vw, Ww) + fuel_weight(y, Sw, t, b/2, Vw, Ww);
+    load = Lift_perSpan(y, b/2, MTOW, f, n) + struct_weight(tc, y, Sw, t, b/2, Vw, Ww) + fuel_weight(tc, y, Sw, t, b/2, Vw, Ww);
 elseif strcmp(componentname,'htail')
-    load = Lift_perSpan(y, b/2, MTOW, f, n) + struct_weight(y, Sw, t, b/2, Vw, Ww);
+    load = Lift_perSpan(y, b/2, MTOW, f, n) + struct_weight(tc, y, Sw, t, b/2, Vw, Ww);
 end
 
 %% Torsion

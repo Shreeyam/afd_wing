@@ -35,7 +35,7 @@ for i = 1:spanwise_steps
     Ar(1,i) = afarea(afpoly,tc,c_y(1,i),bspar) - An(1,i);
     
     % compute cell circumference Sn, Sr
-    
+    Sn = cell_circumference(afpoly,c_y(1,i),fspar);
     
     % compute front spar height (at fspar location)
     h_w(1,i) = sparheight_calc(afpoly,c_y(1,i),fspar);

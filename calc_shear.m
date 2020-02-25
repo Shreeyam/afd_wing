@@ -5,6 +5,7 @@
 clear;
 sims;  % run sims.m
 close all;
+tic;
 disp('Optimization of skin thicknesses...')
 
 %% Double-cell wing torque / bending moment
@@ -71,9 +72,9 @@ for i = 1:spanwise_steps
     q = invdcmat * rhs_load; 
           
     % compute shear in orde : n, r, w
-    tau(1,1) = q(1,1) / tn;   % [N/mm^2]
-    tau(2,1) = q(2,1) / tr;   % [N/mm^2]
-    tau(3,1) = q(3,1) / tw;   % [N/mm^2]
+    tau(1,i) = q(1,1) / tn;   % [N/mm^2]
+    tau(2,i) = q(2,1) / tr;   % [N/mm^2]
+    tau(3,i) = q(3,1) / tw;   % [N/mm^2]
     fprintf('tau [N/mm^2]: \n tau_n = %f\n tau_r = %f\n tau_w = %f\n',tau)
     
     % check:
@@ -90,8 +91,14 @@ for i = 1:spanwise_steps
 end
 
 %% Run optimizer
-t0 = [tn; tr; tw]; % initial guess
-taumax = 1000000;
+disp('Optimizing...')
+optstart = toc;
+% initial guess
+t0 = [tn; tr; tw];
+% Max. shear strength [N/mm^2]
+UTS = 434; % [MPa] Aluminium 2024-t3:
+% https://web.archive.org/web/20060827072154/http://www.alcoa.com/mill_products/catalog/pdf/alloy2024techsheet.pdf
+taumax = 0.65*UTS;   % https://en.wikipedia.org/wiki/Shear_strength
 % optimizer option
 opts = optimoptions('fmincon','Display','iter','MaxFunctionEvaluations',1e4,...
         'MaxIterations',1e3,'ConstraintTolerance',1.0000e-03,...
@@ -99,5 +106,7 @@ opts = optimoptions('fmincon','Display','iter','MaxFunctionEvaluations',1e4,...
 % define number of discretization step along wing
 spanwise_steps = 30;
 [t,fval,exitflag,output] = optim_skin(t0,b,G,taumax,spanwise_steps,componentname,opts);
-
+optend = toc;
+% optimal t: [2.1519, 4.6110, 0.5000]
+fprintf('Optimization took %f sec\n',optend - optstart);  % 245 seconds...
 

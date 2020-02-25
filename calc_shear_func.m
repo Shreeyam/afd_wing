@@ -88,11 +88,11 @@ for i = 1:spanwise_steps-1   % work only up to right before tip to avoid matrix 
     vol_skin_per_span(2,i) + vol_skin_per_span(3,i);  % [mm^3]
     
     % calculate non-linear equality constraints
-    c_ineq(ii,1)   = tau(1,1) - taumax;
+    c_ineq(ii,1)   = abs(tau(1,1)) - taumax;
     ii = ii + 1; % update ii
-    c_ineq(ii+1,1) = tau(2,1) - taumax;
+    c_ineq(ii+1,1) = abs(tau(2,1)) - taumax;
     ii = ii + 1; % update ii
-    c_ineq(ii+2,1) = tau(3,1) - taumax;
+    c_ineq(ii+2,1) = abs(tau(3,1)) - taumax;
     ii = ii + 1; % update ii
     
 end

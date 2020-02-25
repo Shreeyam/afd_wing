@@ -1,6 +1,6 @@
 function [fval, c_ineq] = ...
     calc_shear_func(thickness,G,spanwise_steps,b,taumax,componentname,dens_n,dens_r,dens_w,...
-    Sw, t, afpoly, tc, fspar, bspar, MTOW, f, n, Vw, Ww, afcx, aff, M0, SFBMout, sigma_yield)
+    Sw, t, afpoly, tc, fspar, bspar, MTOW, f, n, Vw, Ww, afcx, aff, M0)
 % Function called within optim_skin for skin optimization
 
 % deconstruct thickness by components
@@ -10,12 +10,6 @@ tw = thickness(3,1);  % [mm]
 
 % discretize wing
 yloc = linspace(0,b/2,spanwise_steps);
-
-% prepare bending moment constraint on tw... interpolate bending moment
-p = polyfit(SFBMout.y(3:length(SFBMout.y),1),SFBMout.BM(3:length(SFBMout.y),1),4);
-BM_at_yloc = 10^3 * polyval(p,yloc)'; % [Nm]
-% convert to Nmm
-BM_at_yloc = BM_at_yloc * 10^3;  % [Nmm]
 
 % initialize
 c_y = zeros(1,spanwise_steps-1);
@@ -28,7 +22,7 @@ Iyy = zeros(1,spanwise_steps-1);
 % d_fspar = zeros(1,spanwise_steps);
 vol_skin_per_span = zeros(3,spanwise_steps-1);
 vol_totalskin_per_span = zeros(1,spanwise_steps-1);
-c_ineq = zeros((spanwise_steps-1)*4,1);
+c_ineq = zeros((spanwise_steps-1)*3,1);
 ii = 1;
 % Iterate over wingspan
 for i = 1:spanwise_steps-1   % work only up to right before tip to avoid matrix singularity
@@ -88,14 +82,7 @@ for i = 1:spanwise_steps-1   % work only up to right before tip to avoid matrix 
     vol_totalskin_per_span(1,i) = vol_skin_per_span(1,i) + ...
     vol_skin_per_span(2,i) + vol_skin_per_span(3,i);  % [mm^2]
     
-    % ===== NON-LINEAR INEQUALITY CONSTRAINTS ===== %
-    % compute second-moment of inertia Iyy
-    % Iyy    = wingIyy(b,  t1,D,       t2)
-    Iyy(1,i) = wingIyy(100,20,h_w(1,i),tw); % [mm^4]
-    % calculate bending moment constraint on tw
-    c_ineq(ii,1) = abs(BM_at_yloc(i,1)*tw/Iyy(1,i)) - sigma_yield; % UNITS!
-    ii = ii + 1; % update ii
-    
+    % ===== NON-LINEAR INEQUALITY CONSTRAINTS ===== %   
     % calculate shear constraints on tn, tr, tw
     c_ineq(ii,1)   = abs(tau(1,1)) - taumax;
     ii = ii + 1; % update ii
@@ -111,15 +98,12 @@ vol_per_skin = ((b*10^3/2)/spanwise_steps) * [sum(vol_skin_per_span(1,:));
                 sum(vol_skin_per_span(2,:));
                 sum(vol_skin_per_span(3,:))];
 
-% compute mass [kg]
+% compute mass [kg]; density is in [kg/mm^3] * [mm^3]
 mass_per_skin = [dens_n * vol_per_skin(1,1);
                  dens_r * vol_per_skin(2,1);
                  dens_w * vol_per_skin(3,1)];
              
 % objective function is my total mass
 fval = sum(mass_per_skin);
-
-disp('hi')
-
 
 end

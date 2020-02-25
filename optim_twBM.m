@@ -34,10 +34,13 @@ ub = 10^3; % set max skin thickness [mm]
         % prepare bending moment constraint on tw... interpolate bending moment
         % ... might need fixing for htail?
         p = polyfit(SFBMout.y(3:length(SFBMout.y),1),SFBMout.BM(3:length(SFBMout.y),1),4);
-        BM_at_yloc = 10^3 * polyval(p,yloc)'; % [Nm]
+        BM_at_yloc = polyval(p,yloc)';  % [kN.m]
         % convert to Nmm
-        BM_at_yloc = BM_at_yloc * 10^3;  % [Nmm]
+        BM_at_yloc = BM_at_yloc * 10^3; % [N.m]
+        BM_at_yloc = BM_at_yloc / 10^3; % [N.mm]
+        
         % initialize
+        c   = zeros(spanwise_steps-1,1);
         c_y = zeros(1, spanwise_steps-1);
         h_w = zeros(1, spanwise_steps-1);
         Iyy = zeros(1, spanwise_steps-1);
@@ -48,7 +51,7 @@ ub = 10^3; % set max skin thickness [mm]
             h_w(1,i) = sparheight_calc(afpoly,c_y(1,i),fspar) * 10^3; % [mm]
             % compute Iyy
             Iyy(1,i) = wingIyy(100,20,h_w(1,i),tw); % [mm^4]
-            % compute condition
+            % compute inequality condition
             c(i,1) = abs( BM_at_yloc(i,1) * tw / Iyy(1,i) ) - sigma_yield;  
         end
         % no equality constraints

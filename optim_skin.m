@@ -1,7 +1,6 @@
 function [thickness,fval,exitflag,output,cLast] = ...
     optim_skin(t0,b,G,taumax,spanwise_steps,componentname,opts,dens_n,dens_r,dens_w,...
-                Sw, t, afpoly, tc, fspar, bspar, MTOW, f, n, Vw, Ww, afcx, aff, M0,...
-                SFBMout, sigma_yield)
+                Sw, t, afpoly, tc, fspar, bspar, MTOW, f, n, Vw, Ww, afcx, aff, M0)
 % Function calls nested fmincon to optimize for skin thickness
 % FORMAT : [u,fval,exitflag,output] = optim_skin(t0,G,taumax,opts)
 % INPUT :
@@ -19,7 +18,9 @@ objf = @objfun;
 % constraint function, nested below
 cfun = @nlcon;
 % lower and upper bounds
-lb = 1 * ones(3,1);    % set min skin thickness [mm]
+lb = [1;     % min thickness of tn [mm] --> from Crit. buckiling
+      1;     % min thickness of tr [mm] (free)
+      1];    % min thickness of tw [mm] --> from Bending moment!
 ub = 10^3 * ones(3,1); % set max skin thickness [mm]
 
 % % prepare bending moment constraint on h_w... interpolate bending moment
@@ -32,19 +33,17 @@ ub = 10^3 * ones(3,1); % set max skin thickness [mm]
 
 % ... nested functions below ...
     % ===== objective function ===== %
-    function [fval] = objfun(thickness)        
+    function fval = objfun(thickness)        
         % check if computation is necessary
         if ~isequal(thickness,tLast)
             % if t is not equal to tLast, calculate shear along span
             [fvalLast, cLast] = ...
                 calc_shear_func(thickness,G,spanwise_steps,b,taumax,componentname,dens_n,dens_r,dens_w,...
-                Sw, t, afpoly, tc, fspar, bspar, MTOW, f, n, Vw, Ww, afcx, aff, M0,...
-                SFBMout, sigma_yield);
+                Sw, t, afpoly, tc, fspar, bspar, MTOW, f, n, Vw, Ww, afcx, aff, M0);
             tLast = thickness;
         end
         % return objective function value
         fval = fvalLast;
-%         c = cLast;
     end
 
     % ===== non-linear constraint function ===== %
@@ -54,12 +53,9 @@ ub = 10^3 * ones(3,1); % set max skin thickness [mm]
             % if t is not equal to tLast, calculate shear along span
             [fvalLast, cLast] = ...
                 calc_shear_func(thickness,G,spanwise_steps,b,taumax,componentname,dens_n,dens_r,dens_w,...
-                Sw, t, afpoly, tc, fspar, bspar, MTOW, f, n, Vw, Ww, afcx, aff, M0,...
-                SFBMout, sigma_yield);
+                Sw, t, afpoly, tc, fspar, bspar, MTOW, f, n, Vw, Ww, afcx, aff, M0);
             tLast = thickness;
         end
-        % return objective function value
-%         fval = fvalLast;
         c = cLast;
         ceq = []; % no equality constraints
     end

@@ -15,7 +15,7 @@ tr = 1.2;  % [mm]
 tw = 1.5;  % [mm] must take all the bending moment load!
 
 % material parameter
-G = 25000;     % shear modulus [N/mm^2]
+G = 28000;     % shear modulus [N/mm^2]
 
 % discretize wing
 spanwise_steps = 30;
@@ -110,14 +110,13 @@ dens_w = 2700 * 10^-9; % [kg/mm^3]
 spanwise_steps = 30;
 
 % optimizer option
-opts = optimoptions('fmincon','Display','iter','MaxFunctionEvaluations',200,...
+opts = optimoptions('fmincon','Display','iter','MaxFunctionEvaluations',100,...
         'MaxIterations',5e2,'ConstraintTolerance',1.0000e-02,...
         'FiniteDifferenceType','forward','FiniteDifferenceStepSize',1e-8);
 
 [topt,fval,exitflag,output,cineq] = ...
     optim_skin(t0,b,G,taumax,spanwise_steps,componentname,opts,dens_n,dens_r,dens_w,...
-    Sw, t, afpoly, tc, fspar, bspar, MTOW, f, n, Vw, Ww, afcx, aff, M0, ...
-    SFBMout, sigma_yield);
+    Sw, t, afpoly, tc, fspar, bspar, MTOW, f, n, Vw, Ww, afcx, aff, M0);
 % Iter displays: https://uk.mathworks.com/help/optim/ug/iterative-display.html#f92519
 % Feasibility > Maximum constraint violation, where satisfied inequality constraints count as 0
 % First-order optim > First-order optimality measure (should be 0)

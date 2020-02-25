@@ -13,9 +13,11 @@ opts = optimoptions('fmincon','Display','iter','MaxFunctionEvaluations',200,...
         'MaxIterations',5e2,'ConstraintTolerance',1.0000e-02,...
         'FiniteDifferenceType','forward','FiniteDifferenceStepSize',1e-8);
 % initial guess
-tw0 = 12; % [mm]
+tw0 = 1.2; % [mm]
 sigma_yield = 289; % [MPa] Aluminium 2024-t3
 spanwise_steps = 30;
 [twopt,fval,exitflag,output] = ...
     optim_twBM(tw0,sigma_yield,SFBMout,spanwise_steps,Sw,t,b,fspar,afpoly,opts);
+
+
 

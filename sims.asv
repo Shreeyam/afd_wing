@@ -63,7 +63,7 @@ improvePlot;
 
 %% Sim
 
-[SFBMout.y, SFBMout.shearF, SFBMout.BM] = SFBM('Athena Wing',[b/2, 0],{'DF',load,y});
+[y_SFBM, shearforce_SFBM, BM_SFBM] = SFBM('Athena Wing',[b/2, 0],{'DF',load,y});
 
 
 %% find torque and bending momment (double cell tube calculation)

@@ -1,7 +1,7 @@
 function area = afarea(afpoly,tc,chord,cfrac)
 % Yuri Shimane, 2020/02/24
 % ================================================================ %
-% Function calculates area of airfoil (optinally up to a certain %-location
+% Function calculates area of airfoil / cell (optinally up to a certain location
 % in chord length)
 % INPUT
 %   afpoly : polyshape object of airfoil, with unit chord length

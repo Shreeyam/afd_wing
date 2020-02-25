@@ -12,15 +12,14 @@ disp('Optimization of skin thicknesses...')
 % skin thickness - variable!
 tn = 1.2;  % [mm]
 tr = 1.2;  % [mm]
-tw = 1.6;  % [mm]
+tw = 1.5;  % [mm] must take all the bending moment load!
 
 % material parameter
 G = 25000;     % shear modulus [N/mm^2]
-% G = G_Nmm * 10^6;  % convert to SI [N/m^2]
 
 % discretize wing
 spanwise_steps = 30;
-yloc = linspace(0,b,spanwise_steps);
+yloc = linspace(0,b/2,spanwise_steps);
 % initialize
 % c_y = zeros(1,spanwise_steps);
 % An  = zeros(1,spanwise_steps);
@@ -33,7 +32,7 @@ yloc = linspace(0,b,spanwise_steps);
 % Iterate over wingspan
 for i = 1:spanwise_steps
     % chord length at given spanwise location
-    c_y(1,i) = c(yloc(1,i), Sw, t, b);   % [m]
+    c_y(1,i) = chord_y(yloc(1,i), Sw, t, b/2);   % [m]
     % An : nose cell area, between 0 and fspar
     An(1,i) = afarea(afpoly,tc,c_y(1,i),fspar) * 10^6;  % [mm^2]
     % Ar : rectangular cell area, between fspar and bspar
@@ -51,9 +50,9 @@ for i = 1:spanwise_steps
 %     d_fspar(1,i) = (sc_frac - fspar)*c_y(1,i); % [m]
     
     % compute load per unit span
-    lift     = Lift_perSpan(yloc(1,i), b, MTOW, f, n);
-    W_struct = struct_weight(tc, yloc(1,i), Sw, t, b, Vw, Ww);
-    W_fuel   = fuel_weight(tc, yloc(1,i), Sw, t, b, Vw, Ww);
+    lift     = Lift_perSpan(yloc(1,i), b/2, MTOW, f, n);
+    W_struct = struct_weight(tc, yloc(1,i), Sw, t, b/2, Vw, Ww);
+    W_fuel   = fuel_weight(tc, yloc(1,i), Sw, t, b/2, Vw, Ww);
     % compute distance from leading-edge to acting point of loads
     d_lift = 0.25 * c_y(1,i);  % lift acting at quarter-chord point
     d_Wstruct = afcx * c_y(1,i); % structural weight acting point
@@ -90,11 +89,14 @@ for i = 1:spanwise_steps
     
 end
 
-%% Run optimizer
+
+%% Run optimizer for tn, tr, tw
 disp('Optimizing...')
 optstart = toc;
 % initial guess
 t0 = [tn; tr; tw];
+% Yield strength [N/mm^2]
+sigma_yield = 289; % [MPa] Aluminium 2024-t3
 % Max. shear strength [N/mm^2]
 UTS = 434; % [MPa] Aluminium 2024-t3:
 % https://web.archive.org/web/20060827072154/http://www.alcoa.com/mill_products/catalog/pdf/alloy2024techsheet.pdf
@@ -104,15 +106,26 @@ dens_n = 2700 * 10^-9; % [kg/mm^3]
 dens_r = 2700 * 10^-9; % [kg/mm^3]
 dens_w = 2700 * 10^-9; % [kg/mm^3]
 
-% optimizer option
-opts = optimoptions('fmincon','Display','iter','MaxFunctionEvaluations',1e2,...
-        'MaxIterations',5e2,'ConstraintTolerance',1.0000e-02,...
-        'FiniteDifferenceType','forward','FiniteDifferenceStepSize',1e-8);
 % define number of discretization step along wing
 spanwise_steps = 30;
-[topt,fval,exitflag,output] = ...
-    optim_skin(t0,b,G,taumax,spanwise_steps,componentname,opts,dens_n,dens_r,dens_w);
+
+% optimizer option
+opts = optimoptions('fmincon','Display','iter','MaxFunctionEvaluations',200,...
+        'MaxIterations',5e2,'ConstraintTolerance',1.0000e-02,...
+        'FiniteDifferenceType','forward','FiniteDifferenceStepSize',1e-8);
+
+[topt,fval,exitflag,output,cineq] = ...
+    optim_skin(t0,b,G,taumax,spanwise_steps,componentname,opts,dens_n,dens_r,dens_w,...
+    Sw, t, afpoly, tc, fspar, bspar, MTOW, f, n, Vw, Ww, afcx, aff, M0, ...
+    SFBMout, sigma_yield);
+% Iter displays: https://uk.mathworks.com/help/optim/ug/iterative-display.html#f92519
+% Feasibility > Maximum constraint violation, where satisfied inequality constraints count as 0
+% First-order optim > First-order optimality measure (should be 0)
+
 optend = toc;
+
 % optimal thickness: [10.5345; 1.1479; 12.3411] [mm]
 fprintf('Optimization took %f sec\n',optend - optstart);  % 245 seconds...
+fprintf('Optimal thicknesses [mm]: \n tn = %f\n tr = %f\n tw = %f\n',topt);
+fprintf('Total mass required: %f [kg]\n',fval)
 

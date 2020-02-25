@@ -13,7 +13,10 @@ tc = 0.139;  % wing thickness-to-chord ratio
 b = 19.87;   % wing span
 fspar = 0.25;
 bspar = 0.7;
-M0 = 0;      % wing zero-lift moment ___ FIXME!!
+CM0 = 0.01;
+Vinf = 237.4; % [m/s]
+rho = 0.3796; % [kg/m^3]
+M0 = CM0 * 0.5 * rho * Vinf^2 * mac;   % wing zero-lift moment ___ FIXME!!
 
 % compute volume and weight
 Vw = 6.0952; % Wing volume

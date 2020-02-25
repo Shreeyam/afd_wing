@@ -1,5 +1,4 @@
-function [fval, c_ineq, vol_per_skin, mass_per_skin] = ...
-    calc_shear_func(thickness,G,spanwise_steps,b,taumax,componentname,dens_n,dens_r,dens_w)
+function [fval, c_ineq, vol_per_skin] = calc_shear_func(thickness,G,spanwise_steps,b,taumax,componentname)
 % Function called within optim_skin for skin optimization
 
 % call data
@@ -98,17 +97,13 @@ for i = 1:spanwise_steps-1   % work only up to right before tip to avoid matrix 
     
 end
 
+% compute total volume
+fval = sum(vol_totalskin_per_span);
+
 % compute volume per part
 vol_per_skin = [sum(vol_skin_per_span(1,:));
                 sum(vol_skin_per_span(2,:));
                 sum(vol_skin_per_span(3,:))];
 
-% compute mass
-mass_per_skin = [dens_n * vol_per_skin(1,1);
-                 dens_r * vol_per_skin(2,1);
-                 dens_w * vol_per_skin(3,1)];
-             
-% objective function is my total mass
-fval = sum(mass_per_skin);
-
+            
 end

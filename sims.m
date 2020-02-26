@@ -20,7 +20,7 @@ y = linspace(0, b/2, n);
 %% Forces
 if strcmp(componentname,'wing')
     load = Lift_perSpan(y, b/2, MTOW, f, n) + struct_weight(tc, y, Sw, t, b/2, Vw, Ww) + fuel_weight(tc, y, Sw, t, b/2, Vw, Ww);
-elseif strcmp(componentname,'htail')
+else %elseif strcmp(componentname,'htail')
     load = Lift_perSpan(y, b/2, MTOW, f, n) + struct_weight(tc, y, Sw, t, b/2, Vw, Ww);
 end
 
@@ -42,7 +42,7 @@ weight_total_N = trapz(y,weighttest);
 if strcmp(componentname,'wing')
     airfoil = readtable('sc20714.dat', 'HeaderLines', 3);
 % h-tail case
-elseif strcmp(componentname,'htail')
+else %elseif strcmp(componentname,'htail')
     airfoil = readtable('n0012.dat', 'HeaderLines', 3);
 end
 

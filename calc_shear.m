@@ -91,7 +91,7 @@ end
 
 
 %% Run optimizer for tn, tr, tw
-disp('Optimizing...')
+disp('Optimizing for tn,tr,tw...')
 optstart = toc;
 % initial guess
 t0 = [tn; tr; tw];

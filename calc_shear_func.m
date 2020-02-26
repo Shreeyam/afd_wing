@@ -18,7 +18,7 @@ Ar  = zeros(1,spanwise_steps-1);
 Sn  = zeros(1,spanwise_steps-1);
 Sr  = zeros(1,spanwise_steps-1);
 h_w = zeros(1,spanwise_steps-1);
-Iyy = zeros(1,spanwise_steps-1);
+
 % d_fspar = zeros(1,spanwise_steps);
 vol_skin_per_span = zeros(3,spanwise_steps-1);
 vol_totalskin_per_span = zeros(1,spanwise_steps-1);
@@ -69,11 +69,10 @@ for i = 1:spanwise_steps-1   % work only up to right before tip to avoid matrix 
     tau(1,1) = q(1,1) / tn;   % [N/mm^2]
     tau(2,1) = q(2,1) / tr;   % [N/mm^2]
     tau(3,1) = q(3,1) / tw;   % [N/mm^2]
-%     fprintf('tau [N/mm^2]: \n tau_n = %f\n tau_r = %f\n tau_w = %f\n',tau)
-    
+
     % check:
-%     check_P = (q(1,1) - q(2,1) - q(3,1))*h_w;
-%     check_T = 2*An*q(1,1) + 2*Ar*q(2,1);
+    % check_P = (q(1,1) - q(2,1) - q(3,1))*h_w;
+    % check_T = 2*An*q(1,1) + 2*Ar*q(2,1);
     
     % calculate volume per unit span
     vol_skin_per_span(1,i) = tn * Sn(1,i);  % [mm^2]

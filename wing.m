@@ -19,6 +19,6 @@ rho = 0.3796; % [kg/m^3]
 M0 = CM0 * 0.5 * rho * Vinf^2 * mac;   % wing zero-lift moment ___ FIXME!!
 
 % compute volume and weight
-Vw = 6.0952; % Wing volume
+Vw = calc_Vw(Sw, t, tc, b); % Wing volume
 Ww = 441.2 * 9.81/2; % Wing weight (441.2kg: total wing)
 

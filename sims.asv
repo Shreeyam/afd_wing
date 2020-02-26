@@ -7,12 +7,12 @@ addpath(genpath('./SFBM'))
 
 %% Parameters
 ac;
-wing;
-% htail;
+%wing;
+htail;
 
 %% Discretisation
 
-n = 5;
+n = 10;
 y = linspace(0, b/2, n);
 
 % Fuel y - assume 10% b penalty
@@ -23,6 +23,14 @@ if strcmp(componentname,'wing')
 elseif strcmp(componentname,'htail')
     load = Lift_perSpan(y, b/2, MTOW, f, n) + struct_weight(tc, y, Sw, t, b/2, Vw, Ww);
 end
+
+% plot total lift
+lifttest = Lift_perSpan(y, b/2, MTOW, f, n);
+figure(105)
+plot(y,lifttest)
+% calculat
+
+
 
 %% Torsion
 % wing case
@@ -63,7 +71,7 @@ improvePlot;
 
 %% Sim
 
-[y_SFBM, shearforce_SFBM, BM_SFBM] = SFBM('Athena Wing',[b/2, 0],{'DF',load,y});
+[SFBMout.y, SFBMout.shearF, SFBMout.BM] = SFBM('Athena Wing',[b/2, 0],{'DF',load,y});
 
 
 %% find torque and bending momment (double cell tube calculation)

@@ -8,11 +8,11 @@ addpath(genpath('./SFBM'))
 %% Parameters
 ac;
 wing;
-% htail;
+%htail;
 
 %% Discretisation
 
-n = 5;
+n = 10;
 y = linspace(0, b/2, n);
 
 % Fuel y - assume 10% b penalty
@@ -23,6 +23,19 @@ if strcmp(componentname,'wing')
 elseif strcmp(componentname,'htail')
     load = Lift_perSpan(y, b/2, MTOW, f, n) + struct_weight(tc, y, Sw, t, b/2, Vw, Ww);
 end
+
+% plot total lift
+lifttest = Lift_perSpan(y, b/2, MTOW, f, n);
+figure(105)
+plot(y,lifttest);
+xlabel('Span [m]'); ylabel('Lift [N]')
+improvePlot;   % --- how do I run this?
+% calculate just lift force --- this gives value for both wings..??
+Lift_total_N = trapz(y,lifttest);
+% calculate just weight
+weighttest = struct_weight(tc, y, Sw, t, b/2, Vw, Ww);
+weight_total_N = trapz(y,weighttest);
+
 
 %% Torsion
 % wing case

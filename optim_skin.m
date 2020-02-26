@@ -18,7 +18,7 @@ objf = @objfun;
 % constraint function, nested below
 cfun = @nlcon;
 % lower and upper bounds
-lb = [1;     % min thickness of tn [mm] --> from Crit. buckiling
+lb = [4.3;     % min thickness of tn [mm] --> from Crit. buckiling
       1;     % min thickness of tr [mm] (free)
       1];    % min thickness of tw [mm] --> from Bending moment!
 ub = 10^3 * ones(3,1); % set max skin thickness [mm]

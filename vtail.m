@@ -19,5 +19,5 @@ M0 = 0;       % V-tail zero-lift moment
 
 % compute volume and weight
 Vw = calc_Vw(Sw, t, tc, b); % V-tail volume
-Ww = 146.0 * 9.81/2;        % V-tail load on half of H-tail (146kg: total Htail)
+Ww = 120.2 * 9.81/2;        % V-tail load on half of H-tail (146kg: total Htail)
 

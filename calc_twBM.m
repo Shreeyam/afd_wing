@@ -18,6 +18,6 @@ sigma_yield = 289; % [MPa] Aluminium 2024-t3
 spanwise_steps = 30;
 [twopt,fval,exitflag,output] = ...
     optim_twBM(tw0,sigma_yield,SFBMout,spanwise_steps,Sw,t,b,fspar,afpoly,opts);
-
+fprintf('Requirement on front spar thickness tw: %f [mm]\n',fval)
 
 

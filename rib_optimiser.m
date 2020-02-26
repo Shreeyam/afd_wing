@@ -49,10 +49,10 @@ for n = n_rib
         + (mac^2 * tc * rib_thickness * n))];
 end
 
-plot(n_rib, weight);
+plot(n_rib, weight, 'x');
 
-xlabel('N ribs]');
-ylabel('Relative weight');
+xlabel('N ribs [-]');
+ylabel('Normalised weight [-]');
 
 grid;
 improvePlot;

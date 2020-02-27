@@ -13,7 +13,7 @@ close all;  % close figures...
 disp('Optimizing for tn,tr,tw...')
 optstart = toc;
 % define number of discretization step along wing
-spanwise_steps = 30;
+spanwise_steps = 16; % modify to number of ribs 16 / 9 / 2
 % run material property
 al2024t3;
 % initial guess
@@ -41,7 +41,6 @@ optend = toc;
 
 % optimal thickness: [10.5345; 1.1479; 12.3411] [mm]
 fprintf('Optimization took %f sec\n',optend - optstart);  % 245 seconds...
-% fprintf('Optimal thicknesses [mm]: \n tn = %f\n tr = %f\n tw = %f\n',topt);
 fprintf('Total mass required: %f [kg]\n',fval)
 
 %% plotting results of skin analysis
@@ -56,4 +55,7 @@ plot(yloc,topt(2*spanwise_steps+1:3*spanwise_steps,1))
 xlabel('Spanwise location [m]'); ylabel('Thickness [mm]');
 legend('tn','tr','tw')
 improvePlot();
+
+% save workspace
+save( filename )
 

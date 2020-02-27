@@ -1,11 +1,12 @@
-%% Housekeeping
-
+%% sims - LOAD 1 CASE
+% Housekeeping
 clc;
 close all;
 clear;
 addpath(genpath('./SFBM'))
 
 %% Parameters
+Vinf = 237.4; % cruise velocity [m/s]
 ac;
 wing;
 %htail;

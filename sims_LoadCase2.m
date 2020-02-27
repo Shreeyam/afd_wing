@@ -1,4 +1,4 @@
-%% sims - LOAD CASE 1
+%% sims - LOAD CASE 2
 % Housekeeping
 clc;
 close all;
@@ -6,7 +6,7 @@ clear;
 addpath(genpath('./SFBM'))
 
 %% Parameters
-Vinf = 237.4; % cruise velocity [m/s]
+Vinf = 0; % critical corner velocity [m/s]
 ac;
 wing;
 %htail;

@@ -1,9 +1,14 @@
 %% Shear load calculation
-% Yuri Shimane, 2020/02/24
-
-%% Load information from sims.m
+% house keeping
 clear;
-sims;  % run sims.m
+% ============ MODIFY ============ %
+% Load information from sims.m
+sims_LoadCase1;  % run appropriate load case
+al2024t3;        % choose appropriate material
+% define number of discretization step along wing
+spanwise_steps = 16; % modify to number of ribs 16 / 9 / 2
+% ================================ %
+
 %close all;
 tic;
 disp('Optimization of skin thicknesses...')
@@ -12,10 +17,6 @@ disp('Optimization of skin thicknesses...')
 close all;  % close figures...
 disp('Optimizing for tn,tr,tw...')
 optstart = toc;
-% define number of discretization step along wing
-spanwise_steps = 16; % modify to number of ribs 16 / 9 / 2
-% run material property
-al2024t3;
 % initial guess
 t0 = [3.61 * ones(spanwise_steps,1); 
       1 * ones(spanwise_steps,1);
@@ -26,7 +27,7 @@ dens_r = density_kgm3 * 10^-9; % [kg/mm^3]
 dens_w = density_kgm3 * 10^-9; % [kg/mm^3]
 
 % optimizer option
-opts = optimoptions('fmincon','Display','iter','MaxFunctionEvaluations',2000,...
+opts = optimoptions('fmincon','Display','iter','MaxFunctionEvaluations',2,...
         'MaxIterations',1e2,'ConstraintTolerance',1e-01,...
         'FiniteDifferenceType','forward','FiniteDifferenceStepSize',1e-8);
 
@@ -38,9 +39,8 @@ opts = optimoptions('fmincon','Display','iter','MaxFunctionEvaluations',2000,...
 % First-order optim > First-order optimality measure (should be 0)
 
 optend = toc;
-
-% optimal thickness: [10.5345; 1.1479; 12.3411] [mm]
-fprintf('Optimization took %f sec\n',optend - optstart);  % 245 seconds...
+% optimal thickness
+fprintf('Optimization took %f sec\n',optend - optstart);
 fprintf('Total mass required: %f [kg]\n',fval)
 
 %% plotting results of skin analysis
@@ -57,5 +57,7 @@ legend('tn','tr','tw')
 improvePlot();
 
 % save workspace
-save( filename )
+workspacename = strcat('optskins_workspace_',componentname,'_',materialname);
+save( workspacename );
+
 

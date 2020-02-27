@@ -1,7 +1,7 @@
 %% script calls fmincon function for optimizing front-spar thickness over BM const.
 % Load information from sims.m
 clear;
-sims;  % run sims.m
+sims_LoadCase1;  % run sims.m
 close all;
 tic;
 
@@ -14,7 +14,8 @@ opts = optimoptions('fmincon','Display','iter','MaxFunctionEvaluations',200,...
         'FiniteDifferenceType','forward','FiniteDifferenceStepSize',1e-8);
 % initial guess
 tw0 = 1.2; % [mm]
-sigma_yield = 289;    % [MPa] Aluminium 2024-t3
+% call material
+al2024t3;
 spanwise_steps = 30;
 [twopt,fval,exitflag,output] = ...
     optim_twBM(tw0,sigma_yield,SFBMout,spanwise_steps,Sw,t,b,fspar,afpoly,opts);

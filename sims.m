@@ -13,19 +13,20 @@ wing;
 %% Discretisation
 
 n = 10;
+load_factor = 2.5;
 y = linspace(0, b/2, n);
 
 % Fuel y - assume 10% b penalty
 
 %% Forces
 if strcmp(componentname,'wing')
-    load = Lift_perSpan(y, b/2, MTOW, f, n) + struct_weight(tc, y, Sw, t, b/2, Vw, Ww) + fuel_weight(tc, y, Sw, t, b/2, Vw, Ww);
+    load = Lift_perSpan(y, b/2, MTOW, f, load_factor) + struct_weight(tc, y, Sw, t, b/2, Vw, Ww) + fuel_weight(tc, y, Sw, t, b/2, Vw, Ww);
 else %elseif strcmp(componentname,'htail')
-    load = Lift_perSpan(y, b/2, MTOW, f, n) + struct_weight(tc, y, Sw, t, b/2, Vw, Ww);
+    load = Lift_perSpan(y, b/2, MTOW, f, load_factor) + struct_weight(tc, y, Sw, t, b/2, Vw, Ww);
 end
 
 % plot total lift
-lifttest = Lift_perSpan(y, b/2, MTOW, f, n);
+lifttest = Lift_perSpan(y, b/2, MTOW, f, load_factor);
 figure(105)
 plot(y,lifttest);
 xlabel('Span [m]'); ylabel('Lift [N]')

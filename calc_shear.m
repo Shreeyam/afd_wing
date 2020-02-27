@@ -1,16 +1,23 @@
 %% Shear load calculation
 % house keeping
 clear;
+tic;
 % ============ MODIFY ============ %
 % Load information from sims.m
 sims_LoadCase1;  % run appropriate load case
+close all; % closing plots since they clutter the screen...
 al2024t3;        % choose appropriate material
 % define number of discretization step along wing
 spanwise_steps = 16; % modify to number of ribs 16 / 9 / 2
+% MIN NOSE CELL THICKNESS
+tncon = 3.61; % [mm]
+% Max. number of function evaluation by fmincon for skin thicknesses optim.
+maxfunceval = 2000;
 % ================================ %
 
-%close all;
-tic;
+% run Bending Moment optimizer, which returns min. condition (usually 1mm) for tw as variable twopt
+calc_twBM;
+
 disp('Optimization of skin thicknesses...')
 
 %% Run optimizer for tn, tr, tw
@@ -18,17 +25,17 @@ close all;  % close figures...
 disp('Optimizing for tn,tr,tw...')
 optstart = toc;
 % initial guess
-t0 = [3.61 * ones(spanwise_steps,1); 
-      1 * ones(spanwise_steps,1);
-      1 * ones(spanwise_steps,1)];
+t0 = [tncon * ones(spanwise_steps,1); 
+      1 * ones(spanwise_steps,1);      % free EXCEPT IN LOAD CASE 3?
+      twopt * ones(spanwise_steps,1)];
 % densities
 dens_n = density_kgm3 * 10^-9; % [kg/mm^3]
 dens_r = density_kgm3 * 10^-9; % [kg/mm^3]
 dens_w = density_kgm3 * 10^-9; % [kg/mm^3]
 
 % optimizer option
-opts = optimoptions('fmincon','Display','iter','MaxFunctionEvaluations',2,...
-        'MaxIterations',1e2,'ConstraintTolerance',1e-01,...
+opts = optimoptions('fmincon','Display','iter','MaxFunctionEvaluations',maxfunceval,...
+        'MaxIterations',3e2,'ConstraintTolerance',1e-01,...
         'FiniteDifferenceType','forward','FiniteDifferenceStepSize',1e-8);
 
 [topt,fval,exitflag,output,cineq] = ...

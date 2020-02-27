@@ -7,5 +7,6 @@ function Iyy = wingIyy(b,t1,D,t2)
 %   t2 : tw
 
 Iyy = (1/6)*b*t1^3 + (1/2)*b*t1*(D-t1)^2 + (1/12)*t2*(D-2*t1)^3;
+
 end
 

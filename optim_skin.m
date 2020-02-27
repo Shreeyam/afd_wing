@@ -18,10 +18,12 @@ objf = @objfun;
 % constraint function, nested below
 cfun = @nlcon;
 % lower and upper bounds
-lb = [3.6;     % min thickness of tn [mm] --> from Crit. buckiling  %3.6(wing) / 2.7(htail) / 3.2(vtail)
-      1;     % min thickness of tr [mm] (free)
-      1];    % min thickness of tw [mm] --> from Bending moment!
-ub = 10^3 * ones(3,1); % set max skin thickness [mm]
+lb = [2.7 * ones(spanwise_steps,1);   % min thickness of tn [mm] --> from Crit. buckiling  %3.6(wing) / 2.7(htail) / 3.2(vtail)
+      1 * ones(spanwise_steps,1);     % min thickness of tr [mm] (free)
+      1 * ones(spanwise_steps,1)];    % min thickness of tw [mm] --> from Bending moment!
+ub = [10^3 * ones(spanwise_steps,1);
+      10^3 * ones(spanwise_steps,1);
+      10^3 * ones(spanwise_steps,1)]; % set max skin thickness [mm]
 
 % % prepare bending moment constraint on h_w... interpolate bending moment
 % yloc = linspace(0,b/2,spanwise_steps);

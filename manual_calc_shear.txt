@@ -1,0 +1,7 @@
+1. Run Shreeyam script for determining min. nose cell thickness
+2. Go to calc_shear.m, modify accordingly between lines 5 and 16;
+Line 7: choose load case sim file
+Line 9: choose material
+Line 11: choose spanwise # of steps (set as rib number?)
+Line 13: set to thickness found from step 1
+Line 15: 2000 is what I used to run, optimization ends prematurely but solution isn't too bad... if your PC is awesome maybe consider crancking this up to 2500 or 3000...?

@@ -16,7 +16,7 @@ b = 2.4;      % V-tail span
 fspar = 0.25; % V-tail spar num.: same as wing
 bspar = 0.7;  % V-tail spar num.: same as wing
 M0 = 0;       % V-tail zero-lift moment
-
+CL_tail = 0;  % 0 at 0 AoA
 % compute volume and weight
 Vw = calc_Vw(Sw, t, tc, b); % V-tail volume
 Ww = 120.2 * 9.81/2;        % V-tail load on half of H-tail (146kg: total Htail)

@@ -10,7 +10,7 @@ Vinf = 237.4; % cruise velocity [m/s]
 ac;
 % wing;
 % htail;
-vtail;
+% vtail;
 
 %% Discretisation
 
@@ -24,7 +24,8 @@ y = linspace(0, b/2, n);
 if strcmp(componentname,'wing')
     load = Lift_perSpan(y, b/2, MTOW, f, load_factor) + struct_weight(tc, y, Sw, t, b/2, Vw, Ww) + fuel_weight(tc, y, Sw, t, b/2, Vw, Ww);
 elseif strcmp(componentname,'htail')
-    load = Lift_perSpan(y, b/2, MTOW, f, load_factor) + struct_weight(tc, y, Sw, t, b/2, Vw, Ww);
+    tailload = 0.5 * 0.3796 * Vinf^2 * CL_tail^2;
+    load = Lift_perSpan(y, b/2, tailload, f, load_factor) + struct_weight(tc, y, Sw, t, b/2, Vw, Ww);
 elseif strcmp(componentname,'vtail')
     load = struct_weight(tc, y, Sw, t, b/2, Vw, Ww);
 end

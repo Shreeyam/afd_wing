@@ -8,9 +8,9 @@ addpath(genpath('./SFBM'))
 %% Parameters
 Vinf = 237.4; % cruise velocity [m/s]
 ac;
-wing;
-%htail;
-%vtail;
+% wing;
+% htail;
+vtail;
 
 %% Discretisation
 
@@ -23,8 +23,10 @@ y = linspace(0, b/2, n);
 %% Forces
 if strcmp(componentname,'wing')
     load = Lift_perSpan(y, b/2, MTOW, f, load_factor) + struct_weight(tc, y, Sw, t, b/2, Vw, Ww) + fuel_weight(tc, y, Sw, t, b/2, Vw, Ww);
-else %elseif strcmp(componentname,'htail')
+elseif strcmp(componentname,'htail')
     load = Lift_perSpan(y, b/2, MTOW, f, load_factor) + struct_weight(tc, y, Sw, t, b/2, Vw, Ww);
+elseif strcmp(componentname,'vtail')
+    load = struct_weight(tc, y, Sw, t, b/2, Vw, Ww);
 end
 
 % plot total lift

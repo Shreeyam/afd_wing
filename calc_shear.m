@@ -4,13 +4,13 @@ clear;
 tic;
 % ============ MODIFY ============ %
 % Load information from sims.m
-sims_LoadCase1;  % run appropriate load case
-close all; % closing plots since they clutter the screen...
+sims_LoadCase2;  % run appropriate load case
+close all;       % closing plots since they clutter the screen...
 al2024t3;        % choose appropriate material
 % define number of discretization step along wing
-spanwise_steps = 16; % modify to number of ribs 16 / 9 / 2
+spanwise_steps = 2; % modify to number of ribs 16 / 9 / 2
 % MIN NOSE CELL THICKNESS
-tncon = 3.61; % [mm]
+tncon = 3.2; % [mm]
 % Max. number of function evaluation by fmincon for skin thicknesses optim.
 maxfunceval = 2000;
 % ================================ %

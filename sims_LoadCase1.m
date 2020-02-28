@@ -8,7 +8,7 @@ addpath(genpath('./SFBM'))
 %% Parameters
 Vinf = 237.4; % cruise velocity [m/s]
 ac;
-% wing;
+wing;
 % htail;
 % vtail;
 

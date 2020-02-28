@@ -9,7 +9,6 @@ addpath(genpath('./SFBM'))
 ac;
 % turning parameters
 ncrit_loadcase2  = 2.5; % critical load factor
-Phimax_loadcase2 = acosd(1/ncrit_loadcase2);
 rho_loadcase2    = 0.3796; % [kg/m^3]
 S_loadcase2      = 43.85;  % wing area [m^2]
 CLmax_loadcase2  = 1.826;
@@ -17,7 +16,7 @@ Vinf = sqrt( 2*ncrit_loadcase2*MTOW/(rho_loadcase2*S_loadcase2*CLmax_loadcase2) 
 %% choose component
 %wing;
 htail;
-% vtail;
+%vtail;
 
 %% Discretisation
 
@@ -28,6 +27,8 @@ y = linspace(0, b/2, n);
 % Fuel y - assume 10% b penalty
 
 %% Forces
+Phimax_loadcase2 = 79.87;
+
 if strcmp(componentname,'wing')
     load = Lift_perSpan(y, b/2, MTOW, f, load_factor) + cosd(Phimax_loadcase2)*struct_weight(tc, y, Sw, t, b/2, Vw, Ww) + cosd(Phimax_loadcase2)*fuel_weight(tc, y, Sw, t, b/2, Vw, Ww);
 elseif strcmp(componentname,'htail')
@@ -38,6 +39,9 @@ elseif strcmp(componentname,'vtail')
     disp('vtail')
     load = sind(Phimax_loadcase2)*struct_weight(tc, y, Sw, t, b/2, Vw, Ww);
 end
+
+% ensure this is 75 kN (half wing)
+loadsum = abs(sum(load))
 
 % plot total lift
 lifttest = Lift_perSpan(y, b/2, MTOW, f, load_factor);

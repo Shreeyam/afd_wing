@@ -6,7 +6,7 @@ tic;
 % Load information from sims.m
 sims_LoadCase2;  % run appropriate load case
 close all;       % closing plots since they clutter the screen...
-al6061t6;        % choose appropriate material
+al2024t3;        % choose appropriate material
 % define number of discretization step along wing
 spanwise_steps = 9; % modify to number of ribs 16 / 9 / 2
 % MIN NOSE CELL THICKNESS

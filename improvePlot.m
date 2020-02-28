@@ -1,7 +1,7 @@
 function [] = improvePlot()
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Plot parameters
-    plot_width_in_px = 600;
+    plot_width_in_px = 1200;
     plot_height_in_px = 600;
     
     marker_size=15;

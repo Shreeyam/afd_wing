@@ -16,8 +16,8 @@ CLmax_loadcase2  = 1.826;
 Vinf = sqrt( 2*ncrit_loadcase2*MTOW/(rho_loadcase2*S_loadcase2*CLmax_loadcase2) );  % corner velocity [m/s]
 %% choose component
 %wing;
-htail;
-%vtail;
+%htail;
+vtail;
 
 %% Discretisation
 
@@ -97,6 +97,7 @@ improvePlot;
 
 [SFBMout.y, SFBMout.shearF, SFBMout.BM] = SFBM('Athena Wing',[b/2, 0],{'DF',load,y});
 
+sfbm_originalplot(SFBMout)
 
 %% find torque and bending momment (double cell tube calculation)
 

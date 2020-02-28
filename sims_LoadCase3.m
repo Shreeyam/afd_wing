@@ -8,8 +8,8 @@ addpath(genpath('./SFBM'))
 %% Parameters
 Vinf = 237.4; % cruise velocity [m/s]
 ac;
-wing;
-%htail;
+%wing;
+htail;
 %vtail;
 
 %% Discretisation
@@ -88,6 +88,7 @@ improvePlot;
 
 [SFBMout.y, SFBMout.shearF, SFBMout.BM] = SFBM('Athena Wing',[b/2, 0],{'CF',MTOW * 1.5 * 2.5 / 2,2});
 
+sfbm_originalplot(SFBMout)
 
 %% find torque and bending momment (double cell tube calculation)
 

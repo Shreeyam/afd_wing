@@ -1,0 +1,61 @@
+%% selected material analysis
+
+% house keeping
+clear; 
+close all;
+clc;
+addpath('../');
+
+component = 'wing';
+material = 'cfrp';
+
+if strcmp(component,'wing')
+    if strcmp(material,'al')
+        load('optskins_workspace_wing_al7044t7751.mat');
+    else
+        load('optskins_workspace_wing_cfrpwovenqi.mat');
+    end
+elseif strcmp(component,'htail')
+    if strcmp(material,'al')
+        load('optskins_workspace_htail_al7044t7751.mat');
+    else
+        load('optskins_workspace_wing_cfrpwovenqi.mat');
+    end
+elseif strcmp(component,'htail')
+    if strcmp(material,'al')
+        load('optskins_workspace_vtail_al7044t7751.mat');
+    else
+        load('optskins_workspace_wing_cfrpwovenqi.mat');
+    end
+end
+
+% store thicknesses
+tn
+% plot skin thickness
+% discretize wing
+yloc = linspace(0,b/2,spanwise_steps); % [m]
+figure(11)
+clf
+hold on
+plot(yloc,topt(1:spanwise_steps,1),'--b')
+plot(yloc,topt(spanwise_steps+1:2*spanwise_steps,1),'--r')
+plot(yloc,topt(2*spanwise_steps+1:3*spanwise_steps,1),'--m')
+xlabel('Spanwise location [m]'); ylabel('Thickness [mm]');
+legend('t_n','t_r','t_w')
+improvePlot();
+
+%% cfrp
+clear;
+load('optskins_workspace_wing_cfrpwovenqi.mat');
+yloc = linspace(0,b/2,spanwise_steps);
+
+figure(11)
+plot(yloc,topt(1:spanwise_steps,1),':b')
+plot(yloc,topt(spanwise_steps+1:2*spanwise_steps,1),':r')
+plot(yloc,topt(2*spanwise_steps+1:3*spanwise_steps,1),':m')
+xlabel('Spanwise location [m]'); ylabel('Thickness [mm]');
+legend('t_n','t_r','t_w')
+improvePlot();
+
+
+
